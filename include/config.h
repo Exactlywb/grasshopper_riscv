@@ -7,7 +7,10 @@
 # define _EXIT_CODE 255
 #endif
 
-typedef unsigned char Key [32];
+#define BLOCK_SIZE 16
+#define PADDING (BLOCK_SIZE * 8)
+
+typedef unsigned char Key [BLOCK_SIZE * 2];
 
 void *allocate_with_padding (size_t, size_t, size_t *);
 

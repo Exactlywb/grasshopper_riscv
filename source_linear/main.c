@@ -20,7 +20,8 @@ int main (int argc, char **argv)
   }
 
   size_t file_size = get_file_size (input);
-  char *buffer = (char *)allocate_with_padding (file_size, 128, &file_size);
+  char *buffer = (char *)allocate_with_padding
+		   (file_size, PADDING, &file_size);
   fread (buffer, sizeof (char), file_size, input);
 
   Key key = {0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22,
