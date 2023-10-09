@@ -1,14 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "config.h"
-#include "grasshoper.h"
+#include "grasshopper/grasshopper.h"
 #include "file_common.h"
 
 int main (int argc, char **argv)
 {
   if (argc != 2)
   {
-    fprintf (stderr, "Usage: ./grasshoper test_file\n");
+    fprintf (stderr, "Usage: ./grasshopper test_file\n");
     return _EXIT_CODE;
   }
 
@@ -28,7 +28,7 @@ int main (int argc, char **argv)
 	     0x33, 0x44, 0x55, 0x66, 0x77, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54,
 	     0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
 
-  grasshoper_encrypt (buffer, file_size, key);
+  grasshopper_encrypt (buffer, file_size, key);
 
   fclose (input);
   free (buffer);
