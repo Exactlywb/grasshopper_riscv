@@ -29,7 +29,13 @@ int main (int argc, char **argv)
 	     0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
 
   for (size_t block_ind = 0; block_ind < file_size / BLOCK_SIZE; ++block_ind)
+  {
     grasshoper_encrypt (buffer + block_ind, key);
+    fprintf (stdout, "Running %ld/%ld block: ", block_ind, file_size / BLOCK_SIZE);
+    for (int i = 0; i < BLOCK_SIZE; ++i)
+      fprintf (stdout, "%c", (buffer + block_ind)->data [i]);
+    fprintf (stdout, "\n");
+  }
 
   fclose (input);
   free (buffer);
