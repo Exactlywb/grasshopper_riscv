@@ -30,8 +30,25 @@ void grasshoper_encrypt(Block *block, Key key)
   if (generate)
   {
     generate_mul_tbl ();
+    for (int i = 0; i < 256; ++i)
+    {
+      for (int j = 0; j < 16; ++j)
+	fprintf (stdout, "%d", Muls [i] [j]);
+      fprintf (stdout, "\n");
+    }
     generate_coef_tbl ();
+    for (int i = 0; i < NUM_ROUNDS / 2 - 1; ++i)
+    {
+      for (int j = 0; j < BIT_IN_BYTES; ++j)
+	fprintf (stdout, "%d", Coefs [i] [j]);
+      fprintf (stdout, "\n");
+    }
     generate_LS_tbl ();
+    for (int i = 0; i < 16; ++i)
+      for (int j = 0; j < 256; ++j)
+	for (int k = 0; k < 16; ++k)
+	  fprintf (stdout, "%d", LS_tbl [i] [j] [k]);
+    fprintf (stdout, "\n");
     generate = 0;
   }
 
@@ -151,7 +168,7 @@ static void generate_coef_tbl ()
     {
       Block *c = &Coefs [i] [j];
       memset (c, 0, BLOCK_SIZE);
-      ((unsigned char *)c) [BLOCK_SIZE - 1] = i * 8 + 1;
+      c->data [BLOCK_SIZE - 1] = i * 8 + j + 1;
       apply_l (c);
     }
 }
@@ -159,7 +176,7 @@ static void generate_coef_tbl ()
 static void generate_LS_tbl ()
 {
 #define MATR_POWER 4
-  unsigned char l_tbl [BLOCK_SIZE] [BLOCK_SIZE];
+  unsigned char l_tbl [BLOCK_SIZE] [BLOCK_SIZE] = {0};
 
   /* Init matrix.  */
   for (int i = 0; i < BLOCK_SIZE; ++i)
@@ -170,7 +187,7 @@ static void generate_LS_tbl ()
 	l_tbl [i] [j] = lin [j];
 
   /* Powering the matrix.  */
-  unsigned char tmp [BLOCK_SIZE] [BLOCK_SIZE];
+  unsigned char tmp [BLOCK_SIZE] [BLOCK_SIZE] = {0};
   for (int p = 0; p < MATR_POWER; ++p)
   {
     for (int i = 0; i < BLOCK_SIZE; ++i)
