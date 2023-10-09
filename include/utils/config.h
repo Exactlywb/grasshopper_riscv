@@ -8,7 +8,9 @@
 #endif
 
 #define BLOCK_SIZE 16
-#define PADDING (BLOCK_SIZE * 8)
+#define NUM_ROUNDS 10
+
+#define BIT_IN_BYTES 8
 
 typedef unsigned char Key[BLOCK_SIZE * 2];
 
