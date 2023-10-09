@@ -6,3 +6,4 @@
 size_t get_file_size (FILE *);
 
 #endif
+
