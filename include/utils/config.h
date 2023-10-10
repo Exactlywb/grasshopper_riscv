@@ -12,9 +12,7 @@
 
 #define BIT_IN_BYTES 8
 
-typedef unsigned char Key[BLOCK_SIZE * 2];
-
-void *allocate_with_padding (size_t, size_t, size_t *);
+void *allocate_with_padding(size_t, size_t, size_t *);
 
 static char S[0x100] = {
     0xFC, 0xEE, 0xDD, 0x11, 0xCF, 0x6E, 0x31, 0x16,  // 00..07

@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdio.h>
 
-static void encrypt_block(Block *, Key key);
+static void encrypt_block(Block *, Key *key);
 
-static void generate_keys (Keys_Array keys, Key key);
+static void generate_keys (Keys_Array keys, Key *key);
 
 static void apply_f (Block *first, Block *second, const Block *key);
 static void apply_l (Block *block);
@@ -23,48 +23,24 @@ Block Coefs [NUM_ROUNDS / 2 - 1] [BIT_IN_BYTES];
 unsigned char Muls [256] [16];
 unsigned char LS_tbl [16] [256] [16];
 
-void grasshoper_encrypt(Block *block, Key key)
+void grasshoper_encrypt(Block *block, Key *key)
 {
   //TODO: remove it with autogenerating for tables
   static int generate = 1;
   if (generate)
   {
     generate_mul_tbl ();
-    for (int i = 0; i < 256; ++i)
-    {
-      for (int j = 0; j < 16; ++j)
-	fprintf (stdout, "%d", Muls [i] [j]);
-      fprintf (stdout, "\n");
-    }
     generate_coef_tbl ();
-    for (int i = 0; i < NUM_ROUNDS / 2 - 1; ++i)
-    {
-      for (int j = 0; j < BIT_IN_BYTES; ++j)
-	fprintf (stdout, "%d", Coefs [i] [j]);
-      fprintf (stdout, "\n");
-    }
     generate_LS_tbl ();
-    for (int i = 0; i < 16; ++i)
-      for (int j = 0; j < 256; ++j)
-	for (int k = 0; k < 16; ++k)
-	  fprintf (stdout, "%d", LS_tbl [i] [j] [k]);
-    fprintf (stdout, "\n");
     generate = 0;
   }
 
   encrypt_block (block, key);
-  apply_x (block, (Block *)key);
-  apply_x (block, (Block *)(key + BLOCK_SIZE));
+  apply_x (&key->first, block);
+  apply_x (&key->second, block);
 }
 
-static void
-apply_x(Block *block, const Block *key)
-{
-  for (int i = 0; i < BLOCK_SIZE; ++i)
-    block->data [i] = block->data [i] ^ key->data [i];
-}
-
-static void encrypt_block(Block *block, Key key)
+static void encrypt_block(Block *block, Key *key)
 {
   Keys_Array keys;
   generate_keys (keys, key);
@@ -75,10 +51,10 @@ static void encrypt_block(Block *block, Key key)
   apply_x (block, &keys [NUM_ROUNDS - 1]);
 }
 
-static void generate_keys (Keys_Array keys, Key key)
+static void generate_keys (Keys_Array keys, Key *key)
 {
-  keys [0] = *((Block *)((unsigned char *)key + 0 * BLOCK_SIZE));
-  keys [1] = *((Block *)((unsigned char *)key + 1 * BLOCK_SIZE));
+  keys [0] = key->first;
+  keys [1] = key->second;
 
   for (int i = 1; i < NUM_ROUNDS / 2; ++i)
   {
@@ -87,6 +63,13 @@ static void generate_keys (Keys_Array keys, Key key)
     for (int j = 0; j < BIT_IN_BYTES; ++j)
       apply_f (&keys [2 * i], &keys [2 * i + 1], &Coefs [i - 1] [j]);
   }
+}
+
+static void
+apply_x(Block *block, const Block *key)
+{
+  for (int i = 0; i < BLOCK_SIZE; ++i)
+    block->data [i] = block->data [i] ^ key->data [i];
 }
 
 static void apply_l (Block *block)
@@ -111,7 +94,7 @@ static void apply_f (Block *first, Block *second, const Block *key)
   apply_xsl (&tmp, key);
   apply_x (&tmp, second);
 
-  /* Swap them.  */
+  /* Shift them.  */
   *second = *first;
   *first = tmp;
 }
@@ -203,5 +186,14 @@ static void generate_LS_tbl ()
     for (int j = 0; j < 256; ++j)
       for (int k = 0; k < BLOCK_SIZE; ++k)
 	LS_tbl [i] [j] [k] ^= poly_mul (S [j], l_tbl [k] [i]);
+}
+
+
+void block_dump (const Block *block)
+{
+  for (int i = 0; i < BLOCK_SIZE; ++i)
+    printf ("%c", block->data [i]);
+
+  printf ("\n");
 }
 
