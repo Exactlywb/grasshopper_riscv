@@ -1,5 +1,7 @@
 #include "grasshopper/grasshopper.h"
 
+#include <riscv_vector.h>
+
 #include <string.h>
 #include <stdio.h>
 
@@ -68,8 +70,15 @@ static void generate_keys (Keys_Array keys, Key *key)
 static void
 apply_x(Block *block, const Block *key)
 {
-  for (int i = 0; i < BLOCK_SIZE; ++i)
-    block->data [i] = block->data [i] ^ key->data [i];
+  // XOR two 16-bytes arrays block->data and key->data.
+  // The result puts into block->data
+  unsigned vl = __riscv_vsetvl_e8m1(BLOCK_SIZE);
+  vuint8m1_t v1 = __riscv_vle8_v_u8m1(block->data, vl);
+  vuint8m1_t v2 = __riscv_vle8_v_u8m1(key->data, vl);
+  vuint8m1_t vd;
+
+  vd = __riscv_vxor_vv_u8m1(v1, v2, vl);
+  __riscv_vse8_v_u8m1(block->data, vd, vl);
 }
 
 static void apply_l (Block *block)
@@ -105,8 +114,11 @@ static void apply_ls (Block *block)
   for (int i = 0; i < BLOCK_SIZE; ++i)
     for (int j = 0; j < BLOCK_SIZE; ++j)
       tmp [j] ^= LS_tbl [i] [block->data [i]] [j];
-
-  memcpy (block->data, tmp, BLOCK_SIZE);
+  
+  // memcpy pattern (but better for RISCV!)
+  unsigned vl = __riscv_vsetvl_e8m1(BLOCK_SIZE);
+  vuint8m1_t v_tmp = __riscv_vle8_v_u8m1(tmp, vl);
+  __riscv_vse8_v_u8m1(block->data, v_tmp, vl);
 }
 
 static void apply_xsl (Block *block, const Block *key)
