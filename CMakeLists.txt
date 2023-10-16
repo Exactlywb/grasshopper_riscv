@@ -22,7 +22,8 @@ project(Grasshopper)
 set(CMAKE_CXX_STANDARD 20)
 
 # clang-format run
-include(cmake/clang-format.cmake)
+# TODO: reorganize clang-format
+# include(cmake/clang-format.cmake)
 
 # collecting libs
 add_subdirectory(lib)

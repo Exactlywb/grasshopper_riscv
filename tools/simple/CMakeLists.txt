@@ -10,4 +10,5 @@ set(SRCS
 )
 
 add_executable(simple ${SRCS})
-add_clang_format_run(simple ${CMAKE_CURRENT_SOURCE_DIR} ${SRCS})
+# TODO: reorganize clang-format
+# add_clang_format_run(simple ${CMAKE_CURRENT_SOURCE_DIR} ${SRCS})

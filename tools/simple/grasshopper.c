@@ -23,7 +23,7 @@ Block Coefs [NUM_ROUNDS / 2 - 1] [BIT_IN_BYTES];
 unsigned char Muls [256] [16];
 unsigned char LS_tbl [16] [256] [16];
 
-void grasshoper_encrypt(Block *block, Key *key)
+void grasshopper_encrypt(Block *block, Key *key)
 {
   //TODO: remove it with autogenerating for tables
   static int generate = 1;
@@ -106,8 +106,7 @@ static void apply_ls (Block *block)
     for (int j = 0; j < BLOCK_SIZE; ++j)
       tmp [j] ^= LS_tbl [i] [block->data [i]] [j];
 
-  for (int i = 0; i < BLOCK_SIZE; ++i)
-    block->data [i] = tmp [i];
+  memcpy (block->data, tmp, BLOCK_SIZE);
 }
 
 static void apply_xsl (Block *block, const Block *key)

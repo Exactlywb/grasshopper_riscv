@@ -31,7 +31,7 @@ int main (int argc, char **argv)
 
   for (size_t block_ind = 0; block_ind < file_size / BLOCK_SIZE; ++block_ind)
   {
-    grasshoper_encrypt (buffer + block_ind, &key);
+    grasshopper_encrypt (buffer + block_ind, &key);
 #if 1
     fprintf (stdout, "Running %ld/%ld block: ", block_ind, file_size / BLOCK_SIZE);
     for (int i = 0; i < BLOCK_SIZE; ++i)
