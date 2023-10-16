@@ -10,4 +10,5 @@ set(SRCS
 )
 
 add_library(utils STATIC ${SRCS})
-add_clang_format_run(utils ${CMAKE_CURRENT_SOURCE_DIR} ${SRCS})
+# TODO: reorganize clang-format
+# add_clang_format_run(utils ${CMAKE_CURRENT_SOURCE_DIR} ${SRCS})
