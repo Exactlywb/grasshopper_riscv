@@ -20,6 +20,7 @@ typedef Block Keys_Array[NUM_ROUNDS];
 
 //TODO: maybe driver should return pointer on encrypted info?
 void grasshopper_encrypt (Block *block, Key *key);
+void grasshopper_decrypt (Block *block, Key *key);
 void block_dump (const Block *block);
 
 #endif
