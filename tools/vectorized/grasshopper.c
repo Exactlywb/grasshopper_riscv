@@ -152,7 +152,7 @@ static __attribute__((noinline)) void generate_mul_tbl ()
 {
   for (int i = 0; i < 256; ++i)
     for (int j = 0; j < 16; ++j)
-      Muls [i] [j] = poly_mul (i, lin [j]);
+      Muls [i] [j] = poly_mul (i, Lin [j]);
 }
 
 static __attribute__((noinline)) void generate_coef_tbl ()
@@ -178,7 +178,7 @@ static __attribute__((noinline)) void generate_LS_tbl ()
       if (i - 1 == j)
 	l_tbl [i] [j] = 1;
       else if (i == 0)
-	l_tbl [i] [j] = lin [j];
+	l_tbl [i] [j] = Lin [j];
 
   /* Powering the matrix.  */
   unsigned char tmp [BLOCK_SIZE] [BLOCK_SIZE] = {0};
