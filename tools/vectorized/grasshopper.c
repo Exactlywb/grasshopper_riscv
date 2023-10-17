@@ -1,6 +1,6 @@
 #include "grasshopper/grasshopper.h"
 
-#include <riscv_vector.h>
+#include "vector_inst.h"
 
 #include <string.h>
 #include <stdio.h>
