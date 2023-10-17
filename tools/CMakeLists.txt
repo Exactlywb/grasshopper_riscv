@@ -6,7 +6,7 @@
 
 set(TOOLSLIST
   simple
-  vectorized
+  # vectorized
 )
 
 foreach(TOOL ${TOOLSLIST})
