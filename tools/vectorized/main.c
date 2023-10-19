@@ -5,7 +5,7 @@
 #include "grasshopper/grasshopper.h"
 #include "file_common.h"
 
-bool ImportKey(Key* key, const char* key_file) {
+bool import_key(Key* key, const char* key_file) {
   FILE *input;
   if (!(input = fopen(key_file, "r")))
   {
@@ -45,7 +45,7 @@ int main (int argc, char **argv)
   fread (buffer, sizeof (char), file_size, input);
 
   Key key;
-  if (!ImportKey(&key, argv[2])) {
+  if (!import_key(&key, argv[2])) {
     return _EXIT_CODE;
   }
 
