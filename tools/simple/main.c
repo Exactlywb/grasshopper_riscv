@@ -5,7 +5,7 @@
 #include "grasshopper/grasshopper.h"
 #include "file_common.h"
 
-bool ImportKey(Key* key, const char* key_file) {
+bool import_key(Key* key, const char* key_file) {
   FILE *input;
   if (!(input = fopen(key_file, "r")))
   {
@@ -13,9 +13,9 @@ bool ImportKey(Key* key, const char* key_file) {
       return false;
   }
 
-  // Firstly we read first 16 bytes that will formed first key block
+  // Firstly we read first 16 bytes. That will form first key block
   fread(key->first.data, sizeof(char), BLOCK_SIZE, input);
-  // Now we need to read las 16 bytes to forme second key block.
+  // Now we need to read last 16 bytes to form second key block.
   // To do it we make an offset and set file pointer.
   fseek(input, BLOCK_SIZE, SEEK_SET);
   fread(key->second.data, sizeof(char), BLOCK_SIZE, input);
@@ -45,7 +45,7 @@ int main (int argc, char **argv)
   fread (buffer, sizeof (char), file_size, input);
 
   Key key;
-  if (!ImportKey(&key, argv[2])) {
+  if (!import_key(&key, argv[2])) {
     return _EXIT_CODE;
   }
   Key descrypt_key = key;
