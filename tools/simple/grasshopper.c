@@ -51,13 +51,14 @@ void CBC_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks
 
 void CBC_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
-  for (int i = NBlocks - 1; i > 0 ;i--) {
-    copy_block(&result_block, text + i - 1);
+  Block encrypt_block;
+  copy_block(&result_block, iv);
+  for (int i = 0; i < NBlocks; ++i) {
+    copy_block(&encrypt_block, text + i);
     grasshopper_decrypt(text + i, key);
     apply_x(text + i, &result_block);
+    copy_block(&result_block, &encrypt_block);
   }
-  grasshopper_decrypt(text, key);
-  apply_x(text, iv);
 }
 
 void PCBC_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
@@ -68,7 +69,6 @@ void PCBC_encryption(Block *text, const Key* key, const Block* iv, size_t NBlock
     copy_block(&open_text, text + i);
     apply_x(text + i, &result_block);
     grasshopper_encrypt(text + i, key);
-    apply_x(text + i, &open_text);
     copy_block(&result_block, text + i);
     apply_x(&result_block, &open_text);
   }
@@ -80,7 +80,7 @@ void PCBC_decryption(Block *text, const Key* key, const Block* iv, size_t NBlock
   copy_block(&result_block, iv);
   for(int i = 0; i < NBlocks; ++i) {
     copy_block(&cypher_text, text + i);
-    grasshopper_encrypt(text + i, key);
+    grasshopper_decrypt(text + i, key);
     apply_x(text + i, &result_block);
     copy_block(&result_block, text + i);
     apply_x(&result_block, &cypher_text);
@@ -99,11 +99,13 @@ void CFB_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks
 
 void CFB_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
+  Block cypher_text;
   copy_block(&result_block, iv);
   for (int i = 0; i < NBlocks; ++i) {
     grasshopper_encrypt(&result_block, key);
+    copy_block(&cypher_text, text + i);
     apply_x(text + i, &result_block);
-    copy_block(&result_block, text + i);
+    copy_block(&result_block, &cypher_text);
   }
 }
 
