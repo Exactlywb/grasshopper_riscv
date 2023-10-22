@@ -23,5 +23,20 @@ void grasshopper_encrypt (Block *block, Key *key);
 void grasshopper_decrypt (Block *block, Key *key);
 void block_dump (const Block *block);
 
+void ECB_encryption(Block *text, const Key* key, size_t NBlocks);
+void ECB_decryption(Block *text, const Key* key, size_t NBlocks);
+
+void CBC_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks);
+void CBC_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks);
+
+void PCBC_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks);
+void PCBC_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks);
+
+void CFB_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks);
+void CFB_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks);
+
+void OFB_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks);
+void OFB_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks);
+
 #endif
 
