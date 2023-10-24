@@ -3,10 +3,10 @@
 #include <string.h>
 #include <stdio.h>
 
-static void encrypt_block (Block *block, const Key *key);
-static void decrypt_block (Block *block, const Key *key);
+static void encrypt_block (Block *block, Key *key);
+static void decrypt_block (Block *block, Key *key);
 
-static void generate_keys (Keys_Array keys, const Key *key);
+static void generate_keys (Keys_Array keys, Key *key);
 
 static void apply_f (Block *first, Block *second, const Block *key);
 static void apply_l (Block *block);
@@ -22,106 +22,132 @@ static void generate_mul_tbl ();
 static void generate_coef_tbl ();
 static void generate_LS_tbl ();
 
-void copy_block(Block* dst, const Block* src) {
-  memcpy(dst->data, src->data, BLOCK_SIZE);
+int get_cipher_block(Block *text, const char* filename) {
+  FILE* file = fopen(filename, "r");
+  if (!file)
+    return 0;
+
+  return fread(text->data, sizeof(char), BLOCK_SIZE, file);
+}
+
+void encryption_driver (enum cipher_mode mode, Block *text, Key* key, const Block* iv, size_t NBlocks) {
+  switch (mode)
+  {
+    case ECB: ECB_encryption(text, key, NBlocks); break;
+    case CBC: CBC_encryption(text, key, iv, NBlocks); break;
+    case PCBC: PCBC_encryption(text, key, iv, NBlocks); break;
+    case CFB: CFB_encryption(text, key, iv, NBlocks); break;
+    case OFB: OFB_encryption(text, key, iv, NBlocks); break;
+  }
+}
+
+void decryption_driver (enum cipher_mode mode, Block *text, Key* key, const Block* iv, size_t NBlocks) {
+  switch (mode)
+  {
+    case ECB: ECB_decryption(text, key, NBlocks); break;
+    case CBC: CBC_decryption(text, key, iv, NBlocks); break;
+    case PCBC: PCBC_decryption(text, key, iv, NBlocks); break;
+    case CFB: CFB_decryption(text, key, iv, NBlocks); break;
+    case OFB: OFB_decryption(text, key, iv, NBlocks); break;
+  }
 }
 
 // Insure that all 
-void ECB_encryption(Block *text, const Key* key, size_t NBlocks) {
+void ECB_encryption(Block *text, Key* key, size_t NBlocks) {
   for(int i = 0; i < NBlocks; ++i) {
     grasshopper_encrypt(text + i, key);
   }
 }
 
-void ECB_decryption(Block *text, const Key* key, size_t NBlocks) {
+void ECB_decryption(Block *text, Key* key, size_t NBlocks) {
   for(int i = 0; i < NBlocks; ++i) {
     grasshopper_decrypt(text + i, key);
   }
 }
 
-void CBC_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
+void CBC_encryption(Block *text, Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
-  copy_block(&result_block, iv);
+  memcpy(result_block.data, iv->data, BLOCK_SIZE);
   for(int i = 0; i < NBlocks; ++i) {
     apply_x(text + i, &result_block);
     grasshopper_encrypt(text + i, key);
-    copy_block(&result_block, text + i);
+    memcpy(result_block.data, text[i].data, BLOCK_SIZE);
   }
 }
 
-void CBC_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
+void CBC_decryption(Block *text, Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
   Block encrypt_block;
-  copy_block(&result_block, iv);
+  memcpy(result_block.data, iv->data, BLOCK_SIZE);
   for (int i = 0; i < NBlocks; ++i) {
-    copy_block(&encrypt_block, text + i);
+    memcpy(encrypt_block.data, text[i].data, BLOCK_SIZE);
     grasshopper_decrypt(text + i, key);
     apply_x(text + i, &result_block);
-    copy_block(&result_block, &encrypt_block);
+    memcpy(result_block.data, encrypt_block.data, BLOCK_SIZE);
   }
 }
 
-void PCBC_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
+void PCBC_encryption(Block *text, Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
   Block open_text;
-  copy_block(&result_block, iv);
+  memcpy(result_block.data, iv->data, BLOCK_SIZE);
   for(int i = 0; i < NBlocks; ++i) {
-    copy_block(&open_text, text + i);
+    memcpy(open_text.data, text[i].data, BLOCK_SIZE);
     apply_x(text + i, &result_block);
     grasshopper_encrypt(text + i, key);
-    copy_block(&result_block, text + i);
+    memcpy(result_block.data, text[i].data, BLOCK_SIZE);
     apply_x(&result_block, &open_text);
   }
 }
 
-void PCBC_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
+void PCBC_decryption(Block *text, Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
-  Block cypher_text;
-  copy_block(&result_block, iv);
+  Block cipher_text;
+  memcpy(result_block.data, iv->data, BLOCK_SIZE);
   for(int i = 0; i < NBlocks; ++i) {
-    copy_block(&cypher_text, text + i);
+    memcpy(cipher_text.data, text[i].data, BLOCK_SIZE);
     grasshopper_decrypt(text + i, key);
     apply_x(text + i, &result_block);
-    copy_block(&result_block, text + i);
-    apply_x(&result_block, &cypher_text);
+    memcpy(result_block.data, text[i].data, BLOCK_SIZE);
+    apply_x(&result_block, &cipher_text);
   }
 }
 
-void CFB_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
+void CFB_encryption(Block *text, Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
-  copy_block(&result_block, iv);
+  memcpy(result_block.data, iv->data, BLOCK_SIZE);
   for (int i = 0; i < NBlocks; ++i) {
     grasshopper_encrypt(&result_block, key);
     apply_x(text + i, &result_block);
-    copy_block(&result_block, text + i);
+    memcpy(result_block.data, text[i].data, BLOCK_SIZE);
   }
 }
 
-void CFB_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
+void CFB_decryption(Block *text, Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
-  Block cypher_text;
-  copy_block(&result_block, iv);
+  Block cipher_text;
+  memcpy(result_block.data, iv->data, BLOCK_SIZE);
   for (int i = 0; i < NBlocks; ++i) {
     grasshopper_encrypt(&result_block, key);
-    copy_block(&cypher_text, text + i);
+    memcpy(cipher_text.data, text[i].data, BLOCK_SIZE);
     apply_x(text + i, &result_block);
-    copy_block(&result_block, &cypher_text);
+    memcpy(result_block.data, cipher_text.data, BLOCK_SIZE);
   }
 }
 
 // TODO: it is possible to vectorize OFB decryption, encryption. aplly_x can be vectorize.
-void OFB_encryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
+void OFB_encryption(Block *text, Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
-  copy_block(&result_block, iv);
+  memcpy(result_block.data, iv->data, BLOCK_SIZE);
   for (int i = 0; i < NBlocks; ++i) {
     grasshopper_encrypt(&result_block, key);
     apply_x(text + i, &result_block);
   }
 }
 
-void OFB_decryption(Block *text, const Key* key, const Block* iv, size_t NBlocks) {
+void OFB_decryption(Block *text, Key* key, const Block* iv, size_t NBlocks) {
   Block result_block;
-  copy_block(&result_block, iv);
+  memcpy(result_block.data, iv->data, BLOCK_SIZE);
   for (int i = 0; i < NBlocks; ++i) {
     grasshopper_encrypt(&result_block, key);
     apply_x(text + i, &result_block);
@@ -152,7 +178,7 @@ void grasshopper_encrypt(Block *block, Key *key)
   apply_x (&key->second, block);
 }
 
-static void encrypt_block (Block *block, const Key *key)
+static void encrypt_block (Block *block, Key *key)
 {
   Keys_Array keys;
   generate_keys (keys, key);
@@ -175,7 +201,7 @@ void grasshopper_decrypt (Block *block, Key *key)
   memcpy (key, &next_key, BLOCK_SIZE * 2);
 }
 
-static void decrypt_block (Block *block, const Key *key)
+static void decrypt_block (Block *block, Key *key)
 {
   Keys_Array keys;
   generate_keys (keys, key);
@@ -186,7 +212,7 @@ static void decrypt_block (Block *block, const Key *key)
   apply_x (block, &keys [0]);
 }
 
-static void generate_keys (Keys_Array keys, const Key *key)
+static void generate_keys (Keys_Array keys, Key *key)
 {
   keys [0] = key->first;
   keys [1] = key->second;
