@@ -8,6 +8,14 @@ Implementation of a project on information security course
 * tools/simple -- sources for simple version of grasshopper [Daniil Frolov](https://github.com/Exactlywb), [Egor Dolgodvorov](https://github.com/Krym4s)
 * tools/vectorized -- sources for vectorized version of grasshopper [Vladislav Belov](https://github.com/kolobabka)
 
+# Contributing
+
+Grasshopper project has `.clang-format` file. Since we still don't have CI, don't forget format your code 'by hands' 
+
+```
+git add <changed/added/deleted files>
+git-clang-format origin/main
+``` 
 
 ## How to build
 
