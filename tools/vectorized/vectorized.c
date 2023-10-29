@@ -19,11 +19,12 @@ void apply_x(Block *block, const Block *key) {
   __riscv_vse8_v_u8m1(block->data, vd, vl);
 }
 
+// TODO: try to get a profit here
 void apply_l(Block *block) {
   for (int i = 0; i < BLOCK_SIZE; ++i) {
     unsigned char tmp = 0;
     for (int j = 0; j < BLOCK_SIZE; ++j)
-      tmp ^= Muls[block->data[j]][j];
+      tmp ^= Muls[block->data[j] /*v3 = v2 + Muls; v2 = v1 * 16 + j*/][j];
 
     /* Copy backward.  */
     for (int rev = BLOCK_SIZE - 1; rev > 0; --rev)
@@ -35,12 +36,17 @@ void apply_l(Block *block) {
 
 void apply_ls(Block *block) {
   unsigned char tmp[16] = {0};
-  for (int i = 0; i < BLOCK_SIZE; ++i)
-    for (int j = 0; j < BLOCK_SIZE; ++j)
-      tmp[j] ^= LS_tbl[i][block->data[i]][j];
-
-  // memcpy pattern (it's better than libc's implementation for RISCV)
   unsigned vl = __riscv_vsetvl_e8m1(BLOCK_SIZE);
-  vuint8m1_t v_tmp = __riscv_vle8_v_u8m1(tmp, vl);
-  __riscv_vse8_v_u8m1(block->data, v_tmp, vl);
+  vuint8m1_t vd;
+
+  for (int i = 0; i < BLOCK_SIZE; ++i) {
+    unsigned char *tbl = LS_tbl[i][block->data[i]];
+    vuint8m1_t v1 = __riscv_vle8_v_u8m1(tmp, vl);
+    vuint8m1_t v2 = __riscv_vle8_v_u8m1(tbl, vl);
+
+    vd = __riscv_vxor_vv_u8m1(v1, v2, vl);
+    __riscv_vse8_v_u8m1(tmp, vd, vl);
+  }
+
+  __riscv_vse8_v_u8m1(block->data, vd, vl);
 }
