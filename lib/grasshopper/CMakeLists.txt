@@ -1,14 +1,13 @@
 #-------------------------------------------------------------------------------
 #
-# Grasshopper build system -- simple grasshopper impl
+# Grasshopper build system -- grasshopper library
 #
 #-------------------------------------------------------------------------------
 
 set(SRCS
   grasshopper.c
-  main.c
 )
 
-add_executable(simple ${SRCS})
+add_library(grasshopper STATIC ${SRCS})
 # TODO: reorganize clang-format
-# add_clang_format_run(simple ${CMAKE_CURRENT_SOURCE_DIR} ${SRCS})
+# add_clang_format_run(utils ${CMAKE_CURRENT_SOURCE_DIR} ${SRCS})
