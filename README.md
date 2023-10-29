@@ -7,6 +7,7 @@ Implementation of a project on information security course
 * doc -- documentation, articles, presentation [Pavel Philippenko](https://github.com/pavel-collab)
 * tools/simple -- sources for simple version of grasshopper [Daniil Frolov](https://github.com/Exactlywb), [Egor Dolgodvorov](https://github.com/Krym4s)
 * tools/vectorized -- sources for vectorized version of grasshopper [Vladislav Belov](https://github.com/kolobabka)
+* tools/main -- common driver
 
 # Contributing
 

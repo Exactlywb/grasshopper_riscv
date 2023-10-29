@@ -10,7 +10,7 @@ set(TOOLSLIST
 )
 
 foreach(TOOL ${TOOLSLIST})
-  add_subdirectory(${TOOL})
+  add_executable(${TOOL} main.c ${TOOL}/${TOOL}.c)
 endforeach()
 
 set(TOOLSLIST "${TOOLSLIST}" PARENT_SCOPE)

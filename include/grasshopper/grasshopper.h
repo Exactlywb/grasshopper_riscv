@@ -1,7 +1,7 @@
 #ifndef _GRASSHOPPER_DRIVER_H__
 #define _GRASSHOPPER_DRIVER_H__
 
-#include <config.h>
+#include "utils/config.h"
 
 /* This structure is used to truncate necessary buffer.  This is not
    strict aliasing violation cause all buffers in functions is char *.  */
@@ -51,5 +51,20 @@ void decryption_driver(enum cipher_mode mode, Block *text, Key *key,
 
 // writes a
 int get_cipher_block(Block *text, const char *filename);
+
+// interface
+void encrypt_block(Block *block, Key *key);
+void decrypt_block(Block *block, Key *key);
+
+void generate_keys(Keys_Array keys, Key *key);
+
+void apply_f(Block *first, Block *second, const Block *key);
+void apply_l(Block *block);
+void apply_x(Block *block, const Block *key);
+void apply_ls(Block *block);
+void apply_xls(Block *block, const Block *key);
+void apply_inv_xls(Block *block, const Block *key);
+void apply_inv_l(Block *block);
+void apply_s(Block *block, const unsigned char *tbl);
 
 #endif
