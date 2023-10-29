@@ -253,7 +253,7 @@ void apply_inv_xls(Block *block, const Block *key) {
 void apply_inv_l(Block *block) {
   for (int i = 0; i < BLOCK_SIZE; ++i) {
     unsigned char elem = block->data[0];
-    memcpy(block->data, block->data + 1, BLOCK_SIZE - 1);
+    memmove(block->data, block->data + 1, BLOCK_SIZE - 1);
     block->data[BLOCK_SIZE - 1] = elem;
 
     unsigned char tmp = 0;
