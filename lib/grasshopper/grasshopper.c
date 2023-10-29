@@ -8,14 +8,6 @@ static void generate_mul_tbl();
 static void generate_coef_tbl();
 static void generate_LS_tbl();
 
-int get_cipher_block(Block *text, const char *filename) {
-  FILE *file = fopen(filename, "r");
-  if (!file)
-    return 0;
-
-  return fread(text->data, sizeof(char), BLOCK_SIZE, file);
-}
-
 void encryption_driver(enum cipher_mode mode, Block *text, Key *key,
                        const Block *iv, size_t NBlocks) {
   switch (mode) {

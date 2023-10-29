@@ -49,9 +49,6 @@ void encryption_driver(enum cipher_mode mode, Block *text, Key *key,
 void decryption_driver(enum cipher_mode mode, Block *text, Key *key,
                        const Block *iv, size_t NBlocks);
 
-// writes a
-int get_cipher_block(Block *text, const char *filename);
-
 // interface
 void encrypt_block(Block *block, Key *key);
 void decrypt_block(Block *block, Key *key);
