@@ -242,19 +242,6 @@ void apply_inv_xls(Block *block, const Block *key) {
   apply_s(block, InvS);
 }
 
-void apply_inv_l(Block *block) {
-  for (int i = 0; i < BLOCK_SIZE; ++i) {
-    unsigned char elem = block->data[0];
-    memmove(block->data, block->data + 1, BLOCK_SIZE - 1);
-    block->data[BLOCK_SIZE - 1] = elem;
-
-    unsigned char tmp = 0;
-    for (int j = 0; j < BLOCK_SIZE; ++j)
-      tmp ^= Muls[block->data[j]][j];
-    block->data[BLOCK_SIZE - 1] = tmp;
-  }
-}
-
 /* Work-horse for generate_mul_tbl.  */
 static unsigned char poly_mul(unsigned char left, unsigned char right) {
   /* p(x) = x**8 + x**7 + x**6 + x + 1:
