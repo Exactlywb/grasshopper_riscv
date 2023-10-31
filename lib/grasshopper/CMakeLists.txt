@@ -6,6 +6,7 @@
 
 set(SRCS
   grasshopper.c
+  tables.c
 )
 
 add_library(grasshopper STATIC ${SRCS})
