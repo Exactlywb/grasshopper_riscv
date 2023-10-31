@@ -1,11 +1,6 @@
-#include "grasshopper.h"
 #include <string.h>
-
+#include "grasshopper.h"
 #include "vector_inst.h"
-
-extern Block Coefs[NUM_ROUNDS / 2 - 1][BIT_IN_BYTES];
-extern unsigned char Muls[256][16];
-extern unsigned char LS_tbl[16][256][16];
 
 void apply_x(Block *block, const Block *key) {
   /*
@@ -19,36 +14,6 @@ void apply_x(Block *block, const Block *key) {
 
   vd = __riscv_vxor_vv_u8m1(v1, v2, vl);
   __riscv_vse8_v_u8m1(block->data, vd, vl);
-}
-
-void apply_l(Block *block) {
-  unsigned vl = __riscv_vsetvl_e8m1(BLOCK_SIZE);
-  /* 0, 1, 2, 3, ... 15 */
-  vuint16m2_t vec_j = __riscv_vid_v_u16m2(vl);
-  for (int i = 0; i < BLOCK_SIZE; ++i) {
-    /*
-      tmp = 0;
-      for (j = 0; j < BLOCK_SIZE; ++j)
-        tmp ^= Muls[block->data[j]][j];
-    */
-    vuint8m1_t vtmp = __riscv_vmv_v_x_u8m1(0, vl);
-    vuint8m1_t vidxs = __riscv_vle8_v_u8m1(block->data, vl);
-    vuint16m2_t vext = __riscv_vwcvtu_x_x_v_u16m2(vidxs, vl);
-    vext = __riscv_vmadd_vx_u16m2(vext, BLOCK_SIZE, vec_j, vl);
-    vuint8m1_t v1 = __riscv_vloxei16_v_u8m1(*Muls, vext, vl);
-    vtmp = __riscv_vredxor_vs_u8m1_u8m1(v1, vtmp, vl);
-
-    /*
-      for (rev = BLOCK_SIZE - 1; rev > 0; --rev)
-        block->data[rev] = block->data[rev - 1];
-    */
-    vuint8m1_t vs = __riscv_vle8_v_u8m1(block->data, vl - 1);
-    __riscv_vse8_v_u8m1(block->data + 1, vs, vl - 1);
-    /*
-      block->data[0] = tmp;
-    */
-    block->data[0] = __riscv_vmv_x_s_u8m1_u8(vtmp);
-  }
 }
 
 void apply_ls(Block *block) {

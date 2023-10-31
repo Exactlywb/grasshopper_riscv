@@ -14,6 +14,10 @@ typedef struct Key {
   Block second;
 } Key;
 
+extern Block Coefs [NUM_ROUNDS / 2 - 1] [BIT_IN_BYTES];
+extern unsigned char Muls [256] [16];
+extern unsigned char LS_tbl [16] [256] [16];
+
 enum cipher_mode {
   ECB,
   CBC,
@@ -49,14 +53,13 @@ void encryption_driver(enum cipher_mode mode, Block *text, Key *key,
 void decryption_driver(enum cipher_mode mode, Block *text, Key *key,
                        const Block *iv, size_t NBlocks);
 
-// interface
+/* Interface.  */
 void encrypt_block(Block *block, Key *key);
 void decrypt_block(Block *block, Key *key);
 
 void generate_keys(Keys_Array keys, Key *key);
 
 void apply_f(Block *first, Block *second, const Block *key);
-void apply_l(Block *block);
 void apply_x(Block *block, const Block *key);
 void apply_ls(Block *block);
 void apply_xls(Block *block, const Block *key);

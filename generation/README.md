@@ -1,23 +1,42 @@
 ### Key generation
-For now you need to generate random key for encryption.
-Use
-```colsol
+
+#### Introducing
+
+For now you need to generate random key for encryption. Use
+```bash
 python3 KeyGeneration.py
 ```
-to generate key. It will contain in file __key__ in your current directory. 
+to generate key. It will output the binary key in file `key` in the directory
+from where script has been run.
 
-__Be careful! Save this key somewhere. If you will loose your key, you will not be able to decrypt your text!__
+#### Advanced options
 
-To encrypt text, pass the file with key to main programm as a command line parametr.
+If you want store generated key to the file with custom path, you may use `-f`
+or `--file` options. E.g.:
 
-If you want store random set of byte to the file with custom name, you can use option _-f_ or 
-_--file_ to set custom file name.
-
-```consol
+```bash
 python3 KeyGeneration.py -f file_name
 ```
-```consol
+
+or
+
+```bash
 python3 KeyGeneration.py --file file_name
 ```
 
-In this case, your key will be store in current directory in the file with name, you have set.
+### Tables generation
+
+#### Introducing
+
+In the encryption and decryption algorithms we use tables with magic numbers.
+This numbers represent a mathematical coefficients for operations in Galois
+field to make mathematical operations easier. Of course, it is possible to
+evaluate content of this tables at the program runtime, but in this case we
+would like to decrease the perfomance.
+
+Note, that we generate this tables once for simple implementation and for
+vectorized one. Hence, this trick does not influence on comparison of perfomance
+of both versions.
+
+Do not run it by yourself. Seriously. Only for maintainers.
+
