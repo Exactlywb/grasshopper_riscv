@@ -7,6 +7,7 @@
 set(SRCS
   alloc.c
   file_common.c
+  bmp_header.c
 )
 
 add_library(utils STATIC ${SRCS})

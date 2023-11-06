@@ -15,6 +15,7 @@ typedef struct Key {
 } Key;
 
 enum cipher_mode {
+  NOMODE, /* Input mode is incorrect.  */
   ECB,
   CBC,
   PCBC,
@@ -24,11 +25,11 @@ enum cipher_mode {
 
 typedef Block Keys_Array[NUM_ROUNDS];
 
-// TODO: maybe driver should return pointer on encrypted info?
 void grasshopper_encrypt(Block *block, Key *key);
 void grasshopper_decrypt(Block *block, Key *key);
 void block_dump(const Block *block);
 
+/* Mode interface.  */
 void ECB_encryption(Block *text, Key *key, size_t NBlocks);
 void ECB_decryption(Block *text, Key *key, size_t NBlocks);
 
@@ -44,12 +45,13 @@ void CFB_decryption(Block *text, Key *key, const Block *iv, size_t NBlocks);
 void OFB_encryption(Block *text, Key *key, const Block *iv, size_t NBlocks);
 void OFB_decryption(Block *text, Key *key, const Block *iv, size_t NBlocks);
 
+/* Drivers.  */
 void encryption_driver(enum cipher_mode mode, Block *text, Key *key,
                        const Block *iv, size_t NBlocks);
 void decryption_driver(enum cipher_mode mode, Block *text, Key *key,
                        const Block *iv, size_t NBlocks);
 
-// interface
+/* Common interface.  */
 void encrypt_block(Block *block, Key *key);
 void decrypt_block(Block *block, Key *key);
 

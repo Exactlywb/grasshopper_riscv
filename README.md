@@ -37,3 +37,16 @@ Ready to use. Check the `$BUILD_PATH/bin` folder with executable files
 **simple** -- a non-vectorized version 
 
 **vectorized** -- a vectorized version with (according to RVV spec 1.0)
+
+#### Usage
+
+```
+  cd build/bin
+  ./simple <file_mode> <encryption_mode> <input_file> <key file> <init_vector_file>
+```
+- <file_mode>: 't' is for text input files, 'b' is fo bitmap image.
+- <encryption_node>: One of 'ECB', 'CBC', 'PCBC', 'CFB', 'OFB'.
+- <input_file>: text file or bitmap image.
+- <key_file>: file with key, that was generated for this grasshopper session
+- <init_vector_file>: file with init_vector, that was generated for this grasshopper session, only first block of init vector key is used.
+- [output_img_cipher, output_img_orig]: pair of files for output of ciphered and original image.
