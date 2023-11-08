@@ -272,51 +272,49 @@
 
     \begin{figure}[h!]
         \centering
-        \includegraphics[scale=0.31]{images/functions_instructions_calls.png}
-        \caption{Количество инструкций при вызове основных функций программы}
-        \label{fig:functions_instructions_calls}
+        \includegraphics[scale=0.31]{images/functions_instructions_calls_ECB.jpg}
+        \caption{Количество инструкций при вызове основных функций программы в режиме ECB}
+        \label{fig:functions_instructions_calls_ECB}
     \end{figure}
 
-    \begin{figure}
+    \begin{figure}[h!]
         \centering
-        \includegraphics{images/one_function_innstructions_calls.png}
-        \caption{Сравнение количества инструкций при вызове функции \text{apply\_inv\_l}}
-        \label{fig:one_function_innstructions_calls}
+        \includegraphics{images/total_ticks_ECB.png}
+        \caption{Сравнение общего числа инструкций в программах в режиме ECB}
+        \label{fig:total_ticks_ECB}
     \end{figure}
 
-    \begin{figure}
-        \centering
-        \includegraphics{images/total_ticks.png}
-        \caption{Сравнение общего числа инструкций в программах}
-        \label{fig:total_ticks}
-    \end{figure}
-
-    На рис. \ref{fig:functions_instructions_calls} изображены столбчатые 
-    диаграммы, которые показывают количество инструкций для всех функций, имеющих векторную реализацию. Из графика видно, что на всех функциях векторизованная версия показала лучший результат.
-
-    На рис. \ref{fig:one_function_innstructions_calls} изображен пример для одной функции.
+    На рис. \ref{fig:functions_instructions_calls_ECB} изображены столбчатые  диаграммы, которые показывают количество инструкций для всех 
+    функций, имеющих векторную реализацию. Из графика видно, что на всех функциях векторизованная версия показала лучший результат.
 
     Кроме того, нам важно было получить уменьшение количества инструкций не только в рамках 
-    конкретных функций, но и во всей программе в целом. На рис. \ref{fig:total_ticks} можно 
+    конкретных функций, но и во всей программе в целом. На рис. \ref{fig:total_ticks_ECB} можно 
     увидеть полное число исполненных инструкций для наивной и 
     векторизованной версий.
 
-    Итоговые результаты замеров продставленны в таблице \ref{tab:results}
+    Итоговые результаты замеров продставленны в таблице \ref{tab:result_ECB}
 
-    \begin{table}[]
+    \begin{table}[h!]
     \begin{center}
-    \begin{tabular}{|c|c|c|c|}
+    \begin{tabular}{|c|ccc|}
     \hline
-    \textbf{Function} & Vectorized instruction count & Simple instruction count & Boost \\ \hline
-    \texttt{apply\_x}          & $6562296$                      & $8749728$                  & $1.33$  \\ \hline
-    \texttt{apply\_ls}         & $53927874$                     & $337574484$                & $6.26$  \\ \hline
-    \texttt{apply\_inv\_l}     & $26963937$                     & $61607871$                 & $2.28$  \\ \hline
-    Вся программа     & $1234500$                      & $518000$                   & $4.20$  \\ \hline
+    \multirow{2}{*}{} & \multicolumn{3}{c|}{ECB}                                                                                  \\ \cline{2-4} 
+                      & \multicolumn{1}{c|}{Vectorized instruction count} & \multicolumn{1}{c|}{Simple instruction count} & Boost \\ \hline
+    apply\_x          & \multicolumn{1}{c|}{6562296}                      & \multicolumn{1}{c|}{8749728}                  & 1.33  \\ \hline
+    apply\_ls         & \multicolumn{1}{c|}{53927874}                     & \multicolumn{1}{c|}{337574484}                & 6.26  \\ \hline
+    apply\_inv\_l     & \multicolumn{1}{c|}{10965942}                     & \multicolumn{1}{c|}{61607871}                 & 5.62  \\ \hline
+    apply\_l          & \multicolumn{1}{c|}{8064}                         & \multicolumn{1}{c|}{58816}                    & 7.29  \\ \hline
     \end{tabular}
     \end{center}
-    \caption{Результаты измерений}
-    \label{tab:results}
+    \caption{Результаты измерений в режиме работы ECB}
+    \label{tab:result_ECB}
     \end{table}
+
+    Режим, в котором работает криптографический алгоритм, не вносит существенного влияния. Хотя абсолютные значения количества вызовов
+    отличаются, относительный показатель между векторизованной и наивной версией можно считать одинаковым. Результаты замеров 
+    представлены на рис. \ref{fig:functions_instructions_calls_CBC}, \ref{fig:functions_instructions_calls_CFB}, 
+    \ref{fig:functions_instructions_calls_OFB}, \ref{fig:functions_instructions_calls_PCBC}, \ref{fig:total_ticks}, а так же в таблицах 
+    \ref{tab:result_CBC}, \ref{tab:result_PBC}, \ref{tab:result_CFB}, \ref{tab:result_OFB}.
 
     \section{Вывод}
 
@@ -326,8 +324,132 @@
     
     Векторное расширение RISC-V позволяет получить прирост производительности без ухудшения масштабируемости кода даже для небольших программ.
 
-
+    \newpage
+    
     %% Don't change the following lines
     \nocite{*}
+    \renewcommand{\refname}{Литература} 
     \bibliography{references}
+
+    \renewcommand{\refname}{References} 
+    \begin{thebibliography}{9} 
+    
+    \bibitem{MIPT_Cryptography_book_} 
+    \emph{Cryptographic methods of information protection}. Vladimir S. M. Gabidulin E. M. Cradlesnikov A. I. Cradlesylnikov A. I, MIPT Editorial and Publishing Council, 2016. 
+
+    \bibitem{dorohin_kachkov_sidorenko_}
+    \emph{Implementation of the block cipher <<Grasshopper>> using vector instructions}. Dorokhin S.V. Kachkov S.S. Sidorenko A.A, Works of MIPT. Proceedings of the Moscow Physico-Technical (National Research University), 2018. 
+
+    \bibitem{borodin_rybkin_} 
+    \emph{High-speed software implementations of the block cipher <<Grasshopper>>}. Borodin M.A. Rybkin A.S., Problems of information security. Computer systems, 2014. 
+
+    \bibitem{Exactlywb_}
+    \emph{grasshopper\_riscv}. Belov V. Dolgodvorov E. Filippenko P. S. Frolov D., \href{https://clck.ru/36UMQa}{https://clck.ru/36UMQa}. 
+
+    \bibitem{riscv-v-spec_}
+    \emph{RISC-V "V" Vector Extension}.  \href{https://clck.ru/VftSV}{https://clck.ru/VftSV}. 
+    
+    \end{thebibliography} 
+
+    \newpage
+
+    \section{Приложение}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.5]{images/functions_instructions_calls_CBC.jpg}
+        \caption{Количество вызовов для инструкций векторизованных функций в режиме CBC}
+        \label{fig:functions_instructions_calls_CBC}
+    \end{figure}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.5]{images/functions_instructions_calls_CFB.jpg}
+        \caption{Количество вызовов для инструкций векторизованных функций в режиме CFB}
+        \label{fig:functions_instructions_calls_CFB}
+    \end{figure}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.5]{images/functions_instructions_calls_OFB.jpg}
+        \caption{Количество вызовов для инструкций векторизованных функций в режиме OFB}
+        \label{fig:functions_instructions_calls_OFB}
+    \end{figure}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.3]{images/functions_instructions_calls_PCBC.jpg}
+        \caption{Количество вызовов для инструкций векторизованных функций в режиме PCBC}
+        \label{fig:functions_instructions_calls_PCBC}
+    \end{figure}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[scale=0.3]{images/total_ticks.jpg}
+        \caption{Общее число инструкций в программе для всех режимах}
+        \label{fig:total_ticks}
+    \end{figure}
+
+    \begin{table}[]
+    \begin{center}
+    \begin{tabular}{|c|ccc|}
+    \hline
+    \multirow{2}{*}{} & \multicolumn{3}{c|}{CBC}                                                                                  \\ \cline{2-4} 
+                      & \multicolumn{1}{c|}{Vectorized instruction count} & \multicolumn{1}{c|}{Simple instruction count} & Boost \\ \hline
+    apply\_x          & \multicolumn{1}{c|}{6648642}                      & \multicolumn{1}{c|}{8864856}                  & 1.33  \\ \hline
+    apply\_ls         & \multicolumn{1}{c|}{53927874}                     & \multicolumn{1}{c|}{337574484}                & 6.26  \\ \hline
+    apply\_inv\_l     & \multicolumn{1}{c|}{10965942}                     & \multicolumn{1}{c|}{61607871}                 & 5.62  \\ \hline
+    apply\_l          & \multicolumn{1}{c|}{8064}                         & \multicolumn{1}{c|}{58816}                    & 7.29  \\ \hline
+    \end{tabular}
+    \end{center}
+    \caption{Результаты измерений в режиме работы CBC}
+    \label{tab:result_CBC}
+    \end{table}
+
+    \begin{table}[]
+    \begin{center}
+    \begin{tabular}{|c|ccc|}
+    \hline
+    \multirow{2}{*}{} & \multicolumn{3}{c|}{PCBC}                                                                                 \\ \cline{2-4} 
+                      & \multicolumn{1}{c|}{Vectorized instruction count} & \multicolumn{1}{c|}{Simple instruction count} & Boost \\ \hline
+    apply\_x          & \multicolumn{1}{c|}{6734988}                      & \multicolumn{1}{c|}{8979984}                  & 1.33  \\ \hline
+    apply\_ls         & \multicolumn{1}{c|}{53927874}                     & \multicolumn{1}{c|}{337574484}                & 6.26  \\ \hline
+    apply\_inv\_l     & \multicolumn{1}{c|}{10965942}                     & \multicolumn{1}{c|}{61607871}                 & 5.62  \\ \hline
+    apply\_l          & \multicolumn{1}{c|}{8064}                         & \multicolumn{1}{c|}{58816}                    & 7.29  \\ \hline
+    \end{tabular}
+    \end{center}
+    \caption{Результаты измерений в режиме работы PCBC}
+    \label{tab:result_PBC}
+    \end{table}
+
+    \begin{table}[]
+    \begin{center}
+    \begin{tabular}{|c|ccc|}
+    \hline
+    \multirow{2}{*}{} & \multicolumn{3}{c|}{CFB}                                                                                  \\ \cline{2-4} 
+                      & \multicolumn{1}{c|}{Vectorized instruction count} & \multicolumn{1}{c|}{Simple instruction count} & Boost \\ \hline
+    apply\_x          & \multicolumn{1}{c|}{6648642}                      & \multicolumn{1}{c|}{8864856}                  & 1.33  \\ \hline
+    apply\_ls         & \multicolumn{1}{c|}{60576516}                     & \multicolumn{1}{c|}{379193256}                & 6.26  \\ \hline
+    apply\_l          & \multicolumn{1}{c|}{8064}                         & \multicolumn{1}{c|}{58816}                    & 7.29  \\ \hline
+    \end{tabular}
+    \end{center}
+    \caption{Результаты измерений в режиме работы CFB}
+    \label{tab:result_CFB}
+    \end{table}
+
+    \begin{table}[]
+    \begin{center}
+    \begin{tabular}{|c|ccc|}
+    \hline
+    \multirow{2}{*}{} & \multicolumn{3}{c|}{OFB}                                                                                  \\ \cline{2-4} 
+                      & \multicolumn{1}{c|}{Vectorized instruction count} & \multicolumn{1}{c|}{Simple instruction count} & Boost \\ \hline
+    apply\_x          & \multicolumn{1}{c|}{6648642}                      & \multicolumn{1}{c|}{8864856}                  & 1.33  \\ \hline
+    apply\_ls         & \multicolumn{1}{c|}{60576516}                     & \multicolumn{1}{c|}{379193256}                & 6.26  \\ \hline
+    apply\_l          & \multicolumn{1}{c|}{8064}                         & \multicolumn{1}{c|}{58816}                    & 7.29  \\ \hline
+    \end{tabular}
+    \end{center}
+    \caption{Результаты измерений в режиме работы OFB}
+    \label{tab:result_OFB}
+    \end{table}
+
 \end{document}
