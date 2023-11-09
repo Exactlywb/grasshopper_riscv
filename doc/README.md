@@ -1,1 +1,1 @@
-In this directory you can find a theoretical description about this project and also draft article.
+In this directory you may find a theoretical description about this project and article.
